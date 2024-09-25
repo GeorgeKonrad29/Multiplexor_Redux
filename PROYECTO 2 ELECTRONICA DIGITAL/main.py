@@ -1,8 +1,8 @@
 import BACK.back as bc
-
+import FRONT.front as fc
 if __name__ == "__main__":
     #ACA ES DONDE ENTRAN LOS DATOS
-    values = "1,4,10,11,15,20"
+    values = fc.get_user_input()
     # Convertir cadena a lista de enteros antes de pasar a convertir_a_binario
     minterms = bc.convert_vector(values)
     b_l = bc.convert_number_binary(minterms)
@@ -17,3 +17,4 @@ if __name__ == "__main__":
     #ACA ES DONDE SALE LA RESPUES FINAL
     final_result = result
     print(final_result)
+    fc.generate_mux(final_result, choice_vars)
