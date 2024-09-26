@@ -37,11 +37,26 @@ def process_input(values):
 def generate_multiplexor(size, entry_list, selection_lines):
     root = tk.Tk()
     root.title("Multiplexor")
-    canvas_height = 150 + size * 30
-    root.geometry(f"400x{canvas_height}")
+    
+    # Ajustar el tamaño del canvas dinámicamente
+    canvas_height = 100 + size * 30
+    root.geometry("400x400")
 
-    canvas = tk.Canvas(root, width=400, height=canvas_height, highlightthickness=0)
-    canvas.pack(pady=10)
+    # Crear un frame para contener el canvas y el scrollbar
+    frame = tk.Frame(root)
+    frame.pack(fill=tk.BOTH, expand=True)
+
+    # Crear el canvas con un scrollbar vertical
+    canvas = tk.Canvas(frame, width=400, height=400, highlightthickness=0)
+    scrollbar = tk.Scrollbar(frame, orient=tk.VERTICAL, command=canvas.yview)
+    canvas.configure(yscrollcommand=scrollbar.set)
+
+    scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+    canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+    # Crear un frame interno para el contenido del canvas
+    content_frame = tk.Frame(canvas)
+    canvas.create_window((0, 0), window=content_frame, anchor="nw")
 
     # Limpiar el canvas antes de dibujar
     canvas.delete("all")
@@ -51,7 +66,7 @@ def generate_multiplexor(size, entry_list, selection_lines):
     num_selection_lines = len(selection_lines)
     
     # Dibujar el cuerpo del multiplexor
-    canvas.create_rectangle(100, 50, 300, 50 + num_inputs * 30, fill="lightgrey", outline="black")
+    canvas.create_rectangle(100, 50, 450, 50 + num_inputs * 30, fill="lightgrey", outline="black")
     
     # Dibujar las entradas con números dentro del multiplexor
     for i in range(num_inputs):
@@ -60,21 +75,19 @@ def generate_multiplexor(size, entry_list, selection_lines):
         canvas.create_text(50, 70 + i*30, text=f"{entry_list[i]}", anchor="e")
     
     # Dibujar la salida
-    canvas.create_line(300, 70 + (num_inputs * 30) // 2, 350, 70 + (num_inputs * 30) // 2, fill="black")
-    canvas.create_text(360, 70 + (num_inputs * 30) // 2, text="Y", anchor="w")
+    canvas.create_line(450, 70 + (num_inputs * 30) // 2, 600, 70 + (num_inputs * 30) // 2, fill="black")
+    canvas.create_text(510, 62 + (num_inputs * 30) // 2, text="Y", anchor="w")
     
     # Dibujar las líneas de selección con nombres
     for j, line in enumerate(selection_lines):
         canvas.create_line(200 + j*30, 50 + num_inputs * 30, 200 + j*30, 50 + num_inputs * 30 + 50, fill="black")
         canvas.create_text(200 + j*30, 50 + num_inputs * 30 + 60, text=line, anchor="n")
 
+    content_frame.update_idletasks()
+    canvas.config(scrollregion=canvas.bbox("all"))
+
     root.mainloop()
 
 def generate_mux(entry_list, control_vars):
     size = len(entry_list)
     generate_multiplexor(size, entry_list, control_vars)
-
-if __name__ == "__main__":
-    user_input = get_user_input()
-    minterms = process_input(user_input)
-    
